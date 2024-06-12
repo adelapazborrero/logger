@@ -7,9 +7,9 @@ import (
 	"time"
 
 	"github.com/adelapazborrero/logger/connector"
-	"github.com/adelapazborrero/logger/linux"
-	"github.com/adelapazborrero/logger/mac"
-	"github.com/adelapazborrero/logger/windows"
+	"github.com/adelapazborrero/logger/os-utils/linux"
+	"github.com/adelapazborrero/logger/os-utils/mac"
+	"github.com/adelapazborrero/logger/os-utils/windows"
 )
 
 const (
