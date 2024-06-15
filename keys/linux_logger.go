@@ -1,4 +1,7 @@
-package linux
+//go:build linux
+// +build linux
+
+package keys
 
 import (
 	"bytes"
@@ -7,8 +10,7 @@ import (
 	"github.com/MarinX/keylogger"
 )
 
-type LinuxLogger struct {
-}
+type LinuxLogger struct{}
 
 func NewLinuxLogger() *LinuxLogger {
 	return &LinuxLogger{}
