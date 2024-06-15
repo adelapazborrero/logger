@@ -1,7 +1,16 @@
 package mac
 
-import "bytes"
+import (
+	"bytes"
+)
 
-func CaptureKeyboardKeysDarwin(logBuffer *bytes.Buffer) {
+type MacLogger struct {
+}
+
+func NewMacLogger() *MacLogger {
+	return &MacLogger{}
+}
+
+func (l *MacLogger) CaptureKeyboardKeys(logBuffer *bytes.Buffer) {
 	// Not implemented
 }

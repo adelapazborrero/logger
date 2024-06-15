@@ -1,7 +1,16 @@
 package windows
 
-import "bytes"
+import (
+	"bytes"
+)
 
-func CaptureKeyboardKeysWindows(logBuffer *bytes.Buffer) {
+type WindowsLogger struct {
+}
+
+func NewWindowsLogger() *WindowsLogger {
+	return &WindowsLogger{}
+}
+
+func (l *WindowsLogger) CaptureKeyboardKeys(logBuffer *bytes.Buffer) {
 	// Not implemented
 }

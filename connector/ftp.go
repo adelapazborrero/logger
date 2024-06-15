@@ -69,7 +69,7 @@ func (f *FTP) SendData(logBuffer *bytes.Buffer) {
 
 		log.Printf("Iteration: %d, Time: %s\n", iterations, time.Since(now))
 		iterations++
-		logBuffer.Reset() // Clear the buffer after sending
+		logBuffer.Reset()
 		c.Quit()
 	}
 }
